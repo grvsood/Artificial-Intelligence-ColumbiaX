@@ -43,3 +43,30 @@ Max Depth: 9612
 
 ***************
 
+BFS 6 1 8 4 0 2 7 3 5
+Goal Path: Down Right Up Up Left Down Right Down Left Up Left Up Right Right Down Down Left Left Up Up
+Cost: 20
+Node Expand: 54094
+Search Depth: 20
+Max Depth: 21
+
+***************
+
+A-Star 1 2 5 3 4 0 6 7 8
+Goal Path: Up Left Left
+Cost: 3
+Node Expand: 3
+Search Depth: 3
+Max Depth: 3
+
+***************
+
+A-Star 3 1 2 0 4 5 6 7 8
+Goal Path: Up
+Cost: 1
+Node Expand: 1
+Search Depth: 1
+Max Depth: 1
+
+***************
+

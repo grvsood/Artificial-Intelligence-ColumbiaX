@@ -59,6 +59,12 @@ class PuzzleState(object):
                 self.blank_col = i % self.n
 
                 break
+            
+    def __gt__(self, other):
+        return self.cost > other.cost
+    def __eq__(self, other):
+        return self.cost == other.cost
+
 
     def display(self):
 
@@ -184,7 +190,7 @@ class PuzzleState(object):
         # path.append(self.action)
         s = Q.LifoQueue()
         currentState = self
-        while currentState.parent != None:
+        while currentState.parent is not None:
             s.put(currentState)
             currentState = currentState.parent
         while not s.empty():
@@ -293,18 +299,64 @@ def A_star_search(initial_state):
 
     """A * search"""
     print("astar")
+    t0 = time.time()
+    pq = Q.PriorityQueue()
+    nodesExpand = 0
+    visited = set()
+    maxDepth = 1
+    statecost = calculate_total_cost(initial_state)
+    level = 1
+    pq.put((statecost, level, initial_state))
+    
+    visited.add(initial_state.config)
+    goalPath = []
+    while not pq.empty():
+        currentItem = pq.get()
+        currentState =  currentItem[2]
+        if test_goal(currentState):
+            currentState.printPath(goalPath)
+            writeOutput("A-Star ",initial_state, goalPath, currentState.cost, nodesExpand, len(goalPath), maxDepth)
+            break
+        currentState.expand()
+        nodesExpand += 1
+        print(nodesExpand)
+        children = currentState.children
+        for i in range(0, len(children)):
+            level += 1 
+            if children[i].config not in visited:
+                maxDepth = max(maxDepth, children[i].maxDepth)
+                statecost = calculate_total_cost(children[i])
+                pq.put((statecost,level, children[i]))
+                visited.add(children[i-1].config)
+    t1 = time.time()
+    print("A-STAR: {}".format(t1-t0))
+    
+    
     ### STUDENT CODE GOES HERE ###
 
 def calculate_total_cost(state):
 
     """calculate the total estimated cost of a state"""
-
+    totalCost = 0
+    totalCost += state.cost
+    currentConfig = state.config
+    heuristic = 0
+    for i in range(0,9):
+        heuristic += calculate_manhattan_dist(i, currentConfig[i], state.dimension)
+    totalCost += heuristic
+    return totalCost
     ### STUDENT CODE GOES HERE ###
 
 def calculate_manhattan_dist(idx, value, n):
 
     """calculate the manhattan distance of a tile"""
-
+    if value == 0:
+        return 0
+    x1 = idx / n
+    y1 = idx % n
+    x2 = value / n
+    y2 = value % n
+    return abs(x1 - x2) + abs(y1-y2)
     ### STUDENT CODE GOES HERE ###
 
 def test_goal(puzzle_state):
